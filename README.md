@@ -7,6 +7,8 @@ This project showcases an end-to-end workforce management analytics workflow usi
 ## Dashboard Link
 [Zendesk Workforce Management](https://docs.google.com/spreadsheets/d/1CSOUjWRBKLgGxfPsBrbxhauatoRHm0XgV_4kZ93iFJ4/edit?gid=788165603#gid=788165603)
 
+![Zendesk Dashboard](https://github.com/user-attachments/assets/0cbb0373-4737-4c6f-9193-1cd6c563f8ee)
+
 ## Business Questions / Problem Statements
 The following questions were defined to guide the analysis and dashboard design:
 
