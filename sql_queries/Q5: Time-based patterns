@@ -1,0 +1,10 @@
+-- Hourly and daily ticket creation patterns
+SELECT 
+  DATE(created_at) as ticket_date,
+  EXTRACT(HOUR FROM created_at) as hour_of_day,
+  EXTRACT(DAYOFWEEK FROM created_at) as day_of_week,
+  COUNT(*) as ticket_count,
+  COUNTIF(priority = 'high') as high_priority_count
+FROM `zendesk-wfm-analytics.zendesk_support.tickets`
+GROUP BY ticket_date, hour_of_day, day_of_week
+ORDER BY ticket_date, hour_of_day
