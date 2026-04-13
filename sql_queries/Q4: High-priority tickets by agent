@@ -1,0 +1,11 @@
+-- Agent performance on high-priority tickets
+SELECT 
+  agent_name,
+  COUNTIF(priority = 'high') as high_priority_count,
+  COUNT(*) as total_tickets,
+  ROUND(COUNTIF(priority = 'high') / COUNT(*) * 100, 2) as pct_high_priority,
+  ROUND(AVG(CASE WHEN priority = 'high' THEN resolution_time_hours END), 2) as avg_high_priority_resolution
+FROM `zendesk-wfm-analytics.zendesk_support.tickets`
+GROUP BY agent_name
+HAVING COUNTIF(priority = 'high') > 0
+ORDER BY high_priority_count DESC
