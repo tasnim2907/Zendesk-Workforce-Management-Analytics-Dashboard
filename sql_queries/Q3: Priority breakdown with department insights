@@ -1,0 +1,22 @@
+-- Priority distribution overall and by department
+
+WITH priority_dept AS (
+  SELECT 
+    priority,
+    department,
+    COUNT(*) as dept_count,
+    ROW_NUMBER() OVER (PARTITION BY priority ORDER BY COUNT(*) DESC) as dept_rank
+  FROM `zendesk-wfm-analytics.zendesk_support.tickets`
+  GROUP BY priority, department
+)
+
+SELECT 
+  p.priority,
+  COUNT(*) as ticket_count,
+  ROUND(COUNT(*) / (SELECT COUNT(*) FROM `zendesk-wfm-analytics.zendesk_support.tickets`) * 100, 2) as percentage,
+  pd.department as top_department,
+  pd.dept_count as top_dept_ticket_count
+FROM `zendesk-wfm-analytics.zendesk_support.tickets` p
+LEFT JOIN priority_dept pd ON p.priority = pd.priority AND pd.dept_rank = 1
+GROUP BY p.priority, pd.department, pd.dept_count
+ORDER BY ticket_count DESC
