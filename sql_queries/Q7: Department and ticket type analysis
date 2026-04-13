@@ -1,0 +1,10 @@
+-- Volume by department and type with cross-analysis
+SELECT 
+  department,
+  ticket_type,
+  COUNT(*) as ticket_count,
+  ROUND(AVG(resolution_time_hours), 2) as avg_resolution,
+  COUNTIF(priority = 'high') as high_priority_count
+FROM `zendesk-wfm-analytics.zendesk_support.tickets`
+GROUP BY department, ticket_type
+ORDER BY department, ticket_count DESC
