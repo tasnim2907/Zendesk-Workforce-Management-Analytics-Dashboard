@@ -43,10 +43,10 @@ Date/time parsing for temporal pattern analysis
 
 ### 3. Power BI Dashboard
 
-Page 1: Executive Overview
-Page 2: Workload Distribution by Agent
-Page 3: Time Based Ticket Distribution
-Page 4: Multi Dimensional Analysis
+- Page 1: Executive Overview
+- Page 2: Workload Distribution by Agent
+- Page 3: Time Based Ticket Distribution
+- Page 4: Multi Dimensional Analysis
 
 ## Data Model & Schema
 ### Key Fields:
