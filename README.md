@@ -1,13 +1,14 @@
-# Zendesk Workforce Management Analytics Dashboard (Google Sheets)
-Google Sheets project with Coefficient API integration, Pivot-based analysis, and Dashboard with Zendesk data
+# Zendesk Workforce Management Analytics Dashboard (BigQuery + Power BI)
+Cloud-based analytics project with BigQuery SQL analysis and Power BI interactive dashboards
 
 ## Overview
-This project showcases an end-to-end workforce management analytics workflow using Zendesk Support ticket data integrated with Google Sheets. The workbook includes automated data retrieval via Coefficient, pivot-table analysis, and an interactive dashboard following Zendesk's visual design system.
+This project demonstrates an end-to-end cloud analytics workflow for workforce management using Google BigQuery for data warehousing and SQL analysis, integrated with Power BI for interactive visualization. The project analyzes 1,000 synthetic support tickets across 20 agents over a 2-week period, providing actionable insights into team performance, workload distribution, and operational efficiency.
 
-## Dashboard Link
-[Zendesk Workforce Management](https://docs.google.com/spreadsheets/d/1CSOUjWRBKLgGxfPsBrbxhauatoRHm0XgV_4kZ93iFJ4/edit?gid=788165603#gid=788165603)
+## Power BI Dashboard Preview
+The working dataset could be found here
+['Zendesk WFM Raw data'](./data/zendesk_wfm_raw_data.csv)
 
-![Zendesk Dashboard](https://github.com/user-attachments/assets/0cbb0373-4737-4c6f-9193-1cd6c563f8ee)
+![Workload Distribution by Agent](power_bi/Workload%20Distribution%20by%20Agent.png)
 
 ## Business Questions / Problem Statements
 The following questions were defined to guide the analysis and dashboard design:
@@ -21,39 +22,121 @@ The following questions were defined to guide the analysis and dashboard design:
 7. Which departments or ticket types receive the highest volume?
 8. What is the distribution of tickets by status within each agent's workload?
 
-## What’s Inside the Workbook
-The Google Sheets file is organized as a complete WFM analysis pipeline:
+## BigQuery SQL Analysis
+All business questions were answered using SQL queries in Google BigQuery. The ['sql_queries/'](./sql_queries) folder contains 8 production-ready queries corresponding to each business question. Full query and partial results are shown.
 
-- Zendesk Import sheet: Raw ticket data automatically synced via Coefficient
-- Pivot Tables sheets: Multiple pivot tables analyzing status, agents, priority, and workload distribution
-- Dashboard sheet: Interactive visualizations with KPI cards and charts using Zendesk color palette
+## What’s Inside
+### 1. BigQuery Data Warehouse
 
-## Data Integration Highlights
-Key setup and configuration steps:
-- Connected Zendesk Support to Google Sheets using Coefficient add-on (no-code API integration)
-- Automated real-time ticket data synchronization eliminating manual CSV exports
-- Created 50 synthetic tickets across 5 support agents with realistic WFM attributes
-- Structured data with key dimensions: Status, Priority, Agent, Requester, Timestamps, Department
-- Configured auto-refresh to ensure dashboard reflects current ticket state
+Dataset: zendesk_support
+Table: zendesk_wfm_raw_data
+Records: 1,000 support tickets
+Dimensions: Agent, Status, Priority, Department, Ticket Type, Timestamps
+Metrics: Resolution time, First response time, Ticket counts
+
+### 2. SQL Analysis (BigQuery)
+
+8 production-ready SQL queries analyzing different aspects of WFM operations
+Window functions for rankings and time-series analysis
+Aggregations with conditional logic for KPI calculations
+Date/time parsing for temporal pattern analysis
+
+### 3. Power BI Dashboard
+
+Page 1: Executive Overview
+Page 2: Workload Distribution by Agent
+Page 3: Time Based Ticket Distribution
+Page 4: Multi Dimensional Analysis
+
+## Data Model & Schema
+### Key Fields:
+
+- ticket_id: Unique identifier (500001-501000)
+- status: open | pending | solved
+- priority: high | normal | low
+- agent_name: Assigned support agent (20 unique agents)
+- department: Technical Support | Billing | Customer Success | Product | Sales
+- created_at: Ticket creation timestamp
+- closed_at: Resolution timestamp (null for open/pending)
+- resolution_time_hours: Time to resolution (calculated)
+- first_response_time_hours: Time to first agent response
+
+### Distribution Highlights:
+
+- Status: 59% Solved, 25% Pending, 16% Open
+- Priority: 48% Normal, 41% High, 11% Low
+- Departments: 41% Technical Support, 25% Billing, 20% Customer Success
+- Date Range: April 1-14, 2024 (2 weeks, business hours emphasis)
 
 ## How to Interact
-1. Open the Google Sheets workbook
-2. Go to the Dashboard sheet
-3. Review KPI metrics at the top
-4. Explore pivot charts showing workload distribution and ticket trends
-5. Navigate to individual Pivot Tables sheets for detailed breakdowns
-6. Data refreshes automatically via Coefficient integration
+### Accessing BigQuery Queries
 
-## Tools Used
-- Zendesk Support (ticket management system, free trial)
-- Coefficient (Google Sheets add-on for API integration)
-- Google Sheets (pivot tables, formulas, dashboard design)
-- Charts & conditional formatting (dashboard visualization with Zendesk color palette)
+1. Navigate to the sql_queries/ folder in this repository
+2. Open any .sql file to view the query
+3. To run in BigQuery:
+
+- Go to Google Cloud BigQuery Console
+- Copy the SQL query
+- *Important*: The queries reference the BigQuery table path:
+
+`zendesk-wfm-analytics.zendesk_support.zendesk_wfm_raw_data`
+ Where:
+ - `zendesk-wfm-analytics` = GCP Project ID
+ - `zendesk_support` = BigQuery Dataset name
+ - `zendesk_wfm_raw_data` = Table name (matches the CSV filename)
+
+- Click "Run" to execute
+- Results appear below the query editor
+
+Note on Naming: The CSV file is named zendesk_wfm_raw_data.csv, and when uploaded to BigQuery, it becomes a table with the same name (zendesk_wfm_raw_data) within the zendesk_support dataset. The full table path includes the project ID, which is why queries reference the complete path shown above.
+
+## Tools & Technologies Used
+- Google Cloud Platform (GCP): Cloud infrastructure
+- BigQuery: Data warehousing and SQL analysis
+- SQL: Data querying and aggregation (window functions, CTEs, date functions)
+- Power BI Desktop: Interactive dashboard development
+- Python: Synthetic data generation (pandas, numpy)
+- Git/GitHub: Version control and documentation
+
+## Technical Highlights
+### BigQuery SQL Techniques
+
+- Window Functions: RANK(), ROW_NUMBER() for agent rankings
+- Date/Time Functions: EXTRACT(), DATE(), WEEKNUM() for temporal analysis
+- Conditional Aggregations: COUNTIF(), CASE WHEN for metric calculations
+- Common Table Expressions (CTEs): Complex multi-step queries
+- Array Functions: ARRAY_AGG() for nested aggregations
+
+### Power BI Features
+
+- DAX Measures: Custom KPI calculations (Resolution Rate, Avg Resolution Time)
+- Calculated Columns: Time dimensions (Hour of Day, Day of Week)
+- Relationships: Connected date tables for time intelligence
+- Conditional Formatting: Color-coded performance indicators
+- Interactive Filters: Cross-visual filtering and drill-down
+
+## Key Insights from Analysis
+
+1. Workload Imbalance: Top 5 agents handle 35% of all tickets (70-76 tickets each), while bottom 5 handle only 15% (30-35 tickets each)
+2. Resolution Performance: Average resolution time is 21 hours, with high-priority tickets resolved 40% faster
+3. Peak Hours: 60% of tickets arrive between 9 AM - 2 PM, with peaks at 10 AM and 2 PM
+4. Department Focus: Technical Support receives 41% of all tickets, significantly more than other departments
+5. Status Health: 59% of tickets are resolved, 25% pending, 16% still open
 
 ## Notes for Reviewers
-This project is designed to demonstrate:
-- Integration skills: No-code API connection between enterprise SaaS tools
-- WFM analytics: Understanding of support operations metrics and KPIs
-- Data transformation: Converting raw ticket data into actionable insights
-- Dashboard design: Creating executive-ready visualizations with professional branding
-- Practical application: Simulating real-world workforce management reporting needs
+This project demonstrates:
+
+- Cloud platform proficiency: Setting up and managing GCP BigQuery infrastructure
+- SQL expertise: Writing production-grade analytical queries with advanced functions
+- BI tool mastery: Creating executive-ready dashboards in Power BI
+- Data storytelling: Translating business questions into actionable insights
+- End-to-end analytics: Complete workflow from data ingestion to visualization
+- Documentation: Clear technical documentation and knowledge transfer
+
+## Future Enhancements
+
+- Scheduled BigQuery queries for automated reporting
+- Additional dashboards for SLA tracking and customer satisfaction
+- Integration with real Zendesk API for live data
+- Predictive analytics for workload forecasting
+- Agent performance scoring model
