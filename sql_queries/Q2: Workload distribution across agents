@@ -1,0 +1,13 @@
+-- Agent workload analysis with rankings
+SELECT 
+  agent_name,
+  COUNT(*) as total_tickets,
+  COUNTIF(status = 'open') as open_tickets,
+  COUNTIF(status = 'pending') as pending_tickets,
+  COUNTIF(status = 'solved') as solved_tickets,
+  COUNTIF(priority = 'high') as high_priority_tickets,
+  ROUND(AVG(resolution_time_hours), 2) as avg_resolution_hours,
+  RANK() OVER (ORDER BY COUNT(*) DESC) as workload_rank
+FROM `zendesk-wfm-analytics.zendesk_support.tickets`
+GROUP BY agent_name
+ORDER BY total_tickets DESC
