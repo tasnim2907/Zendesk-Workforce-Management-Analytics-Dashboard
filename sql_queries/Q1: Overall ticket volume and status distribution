@@ -1,0 +1,10 @@
+-- Total tickets and status breakdown
+SELECT 
+  COUNT(*) as total_tickets,
+  COUNTIF(status = 'open') as open_tickets,
+  COUNTIF(status = 'pending') as pending_tickets,
+  COUNTIF(status = 'solved') as solved_tickets,
+  ROUND(COUNTIF(status = 'open') / COUNT(*) * 100, 2) as pct_open,
+  ROUND(COUNTIF(status = 'pending') / COUNT(*) * 100, 2) as pct_pending,
+  ROUND(COUNTIF(status = 'solved') / COUNT(*) * 100, 2) as pct_solved
+FROM `zendesk-wfm-analytics.zendesk_support.tickets`
